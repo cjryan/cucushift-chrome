@@ -1,0 +1,21 @@
+{
+  "name": "CucuShift@Jenkins",
+  "manifest_version": 2,
+  "version": "1.0",
+  "description": "Reformat cucuchisft output from jenkins.",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "CucuShift @ Jenkins output",
+    "popup": "popup.html"
+  },
+  "permissions": [
+    "http://ciqe.englab.nay.redhat.com/*"
+  ],
+  "content_scripts" : [
+    {
+        "matches" : [ "http://ciqe.englab.nay.redhat.com/*"],
+        "css" : ["jquery-ui.css", "cucushift.css"],
+        "js" : ["jquery-1.9.1.js","jquery-ui.js","myScript.js"]
+    }
+ ]
+}
