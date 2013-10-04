@@ -1,4 +1,9 @@
 
 
+.scenario {
+    height:500px;
+    width:1024px;
+    overflow:scroll;
+}
 
 
