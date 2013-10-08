@@ -1,4 +1,13 @@
 
+h3.failed {
+  background: #CD0000;
+}
+h3.passed {
+  background: #00CD00;
+}
+h3.skipped {
+  background: #CDCDCD;
+}
 
 .scenario {
     height:500px;

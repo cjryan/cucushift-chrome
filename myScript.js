@@ -19,6 +19,24 @@ function txtswap(){
   var scenario_replace = document.getElementById("accordion").innerHTML.replace(/Scenario(?: Outline)?: ([^#]+)/g,
                                                                                 '</pre><h3>$1</h3><pre class="scenario">SCENARIO: $1');
   document.getElementById("accordion").innerHTML = scenario_replace;
+
+  //now let's detect and set Scenario Status (passed/failed/skipped)
+  $(document).find('h3').each(function(){
+    var pre=$(this).next()[0];
+    if (pre.innerHTML == undefined)
+      return;
+    var status_class="";
+    if (pre.innerHTML.match(/<span style="color: #CD0000;">/)){
+      status_class = "failed";
+    }
+    else if (pre.innerHTML.match(/<span style="color: #00CD00;">/)){
+      status_class = "passed";
+    }
+    else{
+      status_class ="skipped"; 
+    }
+    $(this).addClass(status_class);
+  });
 }
 
 $( document ).ready(function() {
