@@ -200,6 +200,8 @@ function txtswap(){
   //now let's detect and set Scenario Status (passed/failed/skipped)
   $(document).find('h3').each(function(){
     var pre=$(this).next()[0];
+    if (pre == undefined)
+      return;
     if (pre.innerHTML == undefined)
       return;
     var status_class="";
