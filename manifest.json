@@ -1,19 +1,22 @@
 {
-  "name": "CucuShift@Jenkins",
+  "name": "CucuShift Tools",
   "manifest_version": 2,
   "version": "1.0",
-  "description": "Reformat cucuchisft output from jenkins.",
+  "description": "Hacks for daily job of QE at OpenShift",
   "browser_action": {
     "default_icon": "icon.png",
-    "default_title": "CucuShift @ Jenkins output",
+    "default_title": "CucuShift @ Jenkins/TCMS hacks",
     "popup": "popup.html"
   },
   "permissions": [
+    "http://localhost:8008/cucushift/*",
+    "http://tcms.engineering.redhat.com/*",
     "http://ciqe.englab.nay.redhat.com/*"
   ],
   "content_scripts" : [
     {
-        "matches" : [ "http://ciqe.englab.nay.redhat.com/*"],
+        "matches" : [ "https://tcms.engineering.redhat.com/*",
+                      "http://ciqe.englab.nay.redhat.com/*"],
         "css" : ["jquery-ui.css", "cucushift.css"],
         "js" : ["jquery-1.9.1.js","jquery-ui.js","myScript.js"]
     }
