@@ -1,11 +1,11 @@
 $( document ).ready(function() {
- if (document.location.href.match(/run/)){
+ if (document.location.href.match(/\/run\//)){
    hack_run();
- }else if (document.location.href.match(/plan/)){
+ }else if (document.location.href.match(/\/plan\//)){
    hack_plan();
- }else if (document.location.href.match(/case/)){
+ }else if (document.location.href.match(/\/case\//)){
    hack_case();
- }else if (document.location.href.match(/ciqe/)){
+ }else if (document.location.href.match(/ciqe\./)){
    hack_jenkins();
  }
 });

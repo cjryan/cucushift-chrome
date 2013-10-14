@@ -10,6 +10,8 @@
   },
   "permissions": [
     "http://localhost:8008/cucushift/*",
+    "https://github.com/openshift/cucushift/*",
+    "https://raw.github.com/openshift/cucushift/*",
     "http://tcms.engineering.redhat.com/*",
     "http://ciqe.englab.nay.redhat.com/*"
   ],
