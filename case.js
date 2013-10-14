@@ -15,7 +15,6 @@ function get_script_name(){
 
 
 function hack_case(){
-    console.log("hack_case");
     //$("#display_script").css({background: "red"});
     var new_li = document.createElement('li');
     $(new_li).attr('id', 'tabGitHub');
@@ -25,7 +24,6 @@ function hack_case(){
     $(new_li).append(new_a);
     var feature_file = get_script_name();
     if (feature_file == null){
-        console.log("red");
         $(get_script_element()).css("color", "magenta");
         return;
     }
@@ -36,22 +34,14 @@ function hack_case(){
             $("#github").load("https://github.com/openshift/cucushift/blob/master/features/"+feature_file+" td.blob-line-code", function(response, status, xhr){
                 if ( status == "error" ) {
                     $(get_script_element()).css("color", "red");
+                }else{
+                    $(get_script_element()).css("color", "green");
                 }
                 });
         }catch(err){
             $(get_script_element()).css("color", "red");
         }
         $("#github").css("display","");
-            /*
-        $.ajax({
-            dataType: "html",
-            url: "https://github.com/openshift/cucushift/blob/master/Gemfile"}
-        ).done(function(data){
-            var body=$(data).filter("#files").html();
-            console.log(body);
-            $("#github").load("https://github.com/openshift/cucushift/blob/master/Gemfile");
-            $("#github").css("display","");
-        });*/
     });
     $("#attachment").after('<div style="display:none;" id="github" class="tab_list"></div>');
 }
