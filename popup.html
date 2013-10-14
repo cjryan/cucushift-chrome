@@ -1,25 +1,16 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <script src="jquery-1.9.1.js"></script>
+    <script src="popup.js"></script>
+    <title></title>
 </head>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
 
-
-<script>
-$(document).ready(function(){
-  console.log("READY");
-  $("p").click(function(){
-      chrome.tabs.getSelected(null, function(tab) {
-    chrome.tabs.sendRequest(tab.id, {method: "getSelection"}, function (response) {
-      var text = document.getElementById('text'); 
-      text.innerHTML = response.data;
-    });
-  });
-  });
-});
-
-</script>
-<body>
-<iframe src="https://ciqe.englab.nay.redhat.com/job/Runner-master"/>
-Hellou
+<body style="width: 150px;">
+<div>
+TO BE DONE
+<a href="http://ciqe.englab.nay.redhat.com/job/Runner-master/rssAll">RSS@RunnerMaster</a>
+<a href="http://ciqe.englab.nay.redhat.com/job/CucuShift-Runner/rssAll">RSS@CucushiftRunner</a>
+</div>
 </body>
 </html>
