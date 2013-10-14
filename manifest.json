@@ -1,7 +1,7 @@
 {
   "name": "CucuShift Tools",
   "manifest_version": 2,
-  "version": "1.0",
+  "version": "1.2",
   "description": "Hacks for daily job of QE at OpenShift",
   "browser_action": {
     "default_icon": "icon.png",
@@ -18,7 +18,7 @@
         "matches" : [ "https://tcms.engineering.redhat.com/*",
                       "http://ciqe.englab.nay.redhat.com/*"],
         "css" : ["jquery-ui.css", "cucushift.css"],
-        "js" : ["jquery-1.9.1.js","jquery-ui.js","myScript.js"]
+        "js" : ["jquery-1.9.1.js","jquery-ui.js", "jenkins.js", "plan.js", "case.js", "run.js", "cucushift.js"]
     }
  ]
 }
