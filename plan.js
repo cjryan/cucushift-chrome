@@ -73,14 +73,14 @@ function hack_plan(){
 
 function get_checked_case_ids(){
     var case_ids = [];
-    $("#id_table_cases > tbody > tr").each(function(){
+    $("#testcases > table > tbody > tr").each(function(){
         var checkbox_td = $(this).children()[1];
         var case_id_td = $(this).children()[2];
         if (case_id_td == undefined)
             return;
         if (checkbox_td == undefined)
             return;
-        var case_id = parseInt($(caserun_id_td).find('a')[0].text.replace('#',''));
+        var case_id = parseInt($(case_id_td).find('a')[0].text.replace('#',''));
         if ($($(checkbox_td).children()[0]).is(':checked')){
             case_ids.push(case_id);
         }

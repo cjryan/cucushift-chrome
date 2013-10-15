@@ -1,6 +1,6 @@
 function hack_run(){
     //New menu entry for launching jobs
-    put_dialog();
+    put_dialog({});
     var ul = document.evaluate('//*[@id="id_form_case_runs"]/div/div[2]/div[1]/ul', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue; 
     var new_li = document.createElement('li');
     var new_a = $("<a href='#'>Run@CucuShift</a>");
@@ -16,7 +16,7 @@ function hack_run(){
     $(ul).append(new_li);
 
     //1. Add new column to the table
-    $("#id_table_cases > thead > tr").append("<th>Developer</th>");
+    $("#id_table_cases > thead > tr").append('<th width="100px;">Developer</th>');
     var testrun_id = $("#value_run_id").val();
     $("#id_table_cases > tbody > tr").each(function(){
         var case_id_td = $(this).children()[3];
@@ -77,13 +77,13 @@ function put_dialog(config){
   }
   dialog += '<label for="broker">Broker</label>\
     <input type="text" name="broker" id="broker" value="int.openshift.redhat.com" class="text ui-widget-content ui-corner-all" />\
-    <label for="runner_type">RunnerType</label>\
+    <label for="runner_type">Runner Type</label>\
     <select name="runner_type" id="runner_type" class="text ui-widget-content ui-corner-all">\
         <option value="stable">stable</option>\
         <option value="master">master</option>\
         <option value="local">local</option>\
     </select>\
-    <label for="broker_type">BrokerType</label>\
+    <label for="broker_type">Broker Type</label>\
     <select name="broker_type" id="broker_type" class="text ui-widget-content ui-corner-all">\
         <option value="devenv">devenv</option>\
         <option value="stage">stage</option>\
@@ -91,9 +91,9 @@ function put_dialog(config){
         <option value="prod">prod</option>\
     </select>\
     <label for="rhc_branch">RHC_BRANCH</label>\
-    <select name="rhc_branch" id="rhc_branch" class="ui-widget-content ui-corner-all">\
-    <option value="candidate">candidate</option>\
-    <option value="stable">stable</option>\
+        <select name="rhc_branch" id="rhc_branch" class="ui-widget-content ui-corner-all">\
+        <option value="candidate">candidate</option>\
+        <option value="stable">stable</option>\
     </select>\
     <label for="max_gears">MAX_GEARS</label>\
     <input type="text" name="max_gears" id="max_gears" value="30" class="text ui-widget-content ui-corner-all" />\
@@ -140,7 +140,7 @@ function show_dialog(config){
                 runner_data['CASERUN_IDS'] = config.caserun_ids.join(",");
             }
             if (config.case_ids != undefined && config.case_ids.length>0){
-                runner_data['CASE_IDS'] = config.caserun_ids.join(",");
+                runner_data['CASE_IDS'] = config.case_ids.join(",");
                 runner_data['SUMMARY'] = $("#summary").val();
             }
             var runner_config = {
@@ -153,7 +153,7 @@ function show_dialog(config){
                 url: runner_config[$("#runner_type").val()],
                 data: runner_data
             }).done(function(){
-                alert("Job Sent. Check the jenkins...");
+                alert("Job Sent. Check the jenkins/localhost...");
             });
             $( this ).dialog( "close" );
         },
