@@ -1,0 +1,11 @@
+body {
+    width: 300px;
+    display: block;
+    _background-color: black;
+    _color: white;
+    padding-top: 0;
+}
+a {
+    color: red;
+    font-weight: bolder;
+}

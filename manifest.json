@@ -2,6 +2,9 @@
   "name": "CucuShift Tools",
   "manifest_version": 2,
   "version": "1.2",
+  "background": {
+      "page": "background.html"
+  },
   "description": "Hacks for daily job of QE at OpenShift",
   "browser_action": {
     "default_icon": "icon.png",

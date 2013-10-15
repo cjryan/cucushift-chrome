@@ -5,7 +5,12 @@ function hack_run(){
     var new_li = document.createElement('li');
     var new_a = $("<a href='#'>Run@CucuShift</a>");
     $(new_a).click(function(){
-        show_dialog();
+        var caserun_ids = get_checked_caserun_ids();
+        if (caserun_ids.length == 0){
+            alert("No caseruns have been checked for testing...");
+            return;
+        }
+        show_dialog({caserun_ids:caserun_ids});
     });
     $(new_li).append(new_a);
     $(ul).append(new_li);
@@ -65,18 +70,25 @@ function hack_run(){
 }
 
 
-function put_dialog(){
-  var dialog = '<div style="display:none;" id="dialog-form" title="Launch cases in CucuShift..."> \
-  <form>\
-  <fieldset>\
-    <label for="broker">Broker</label>\
+function put_dialog(config){
+  var dialog = '<div style="display:none;" id="dialog-form" title="Launch cases in CucuShift..."><form><fieldset>';
+  if (config.summary){
+      dialog += '<label for="summary">Summary</label><input type="text" name="summary" id="summary" value="Testrun ..." class="text ui-widget-content ui-corner-all" />';
+  }
+  dialog += '<label for="broker">Broker</label>\
     <input type="text" name="broker" id="broker" value="int.openshift.redhat.com" class="text ui-widget-content ui-corner-all" />\
+    <label for="runner_type">RunnerType</label>\
+    <select name="runner_type" id="runner_type" class="text ui-widget-content ui-corner-all">\
+        <option value="stable">stable</option>\
+        <option value="master">master</option>\
+        <option value="local">local</option>\
+    </select>\
     <label for="broker_type">BrokerType</label>\
     <select name="broker_type" id="broker_type" class="text ui-widget-content ui-corner-all">\
-    <option value="devenv">devenv</option>\
-    <option value="stage">stage</option>\
-    <option>int</option>\
-    <option>prod</option>\
+        <option value="devenv">devenv</option>\
+        <option value="stage">stage</option>\
+        <option value="int">int</option>\
+        <option value="prod">prod</option>\
     </select>\
     <label for="rhc_branch">RHC_BRANCH</label>\
     <select name="rhc_branch" id="rhc_branch" class="ui-widget-content ui-corner-all">\
@@ -99,11 +111,6 @@ login1:password1:small\
 
 
 function show_dialog(config){
-    var caserun_ids = get_checked_caserun_ids();
-    if (caserun_ids.length == 0){
-        alert("No caseruns have been checked for testing...");
-        return;
-    }
     $(function() {
 
     $("#dialog-form").dialog({
@@ -120,19 +127,31 @@ function show_dialog(config){
               max_gears = $("#max_gears"),
               debug = $( "#debug" ),
               accounts = $("#accounts" );
-            $.ajax({
-                type: 'POST',
-                url: "http://ciqe.englab.nay.redhat.com/job/Runner-master/buildWithParameters",
-                data: {
+            var runner_data = {
                     "RHC_BRANCH": rhc_branch.text(),
                     "OPENSHIFT_MAX_GEARS": max_gears.val(),
-                    "CASERUN_IDS": caserun_ids.join(","),
                     "OPENSHIFT_BROKER": broker.val(),
                     "OPENSHIFT_BROKER_TYPE": broker_type.text(),
                     "OPENSHIFT_ACCOUNTS": accounts.val(),
                     "DEBUG": debug.is(':checked'),
                     "token": "openshift",
-                    "TESTRUN_ID": testrun_id}
+                    "TESTRUN_ID": testrun_id};
+            if (config.caserun_ids){
+                runner_data['CASERUN_IDS'] = config.caserun_ids.join(",");
+            }
+            if (config.case_ids != undefined && config.case_ids.length>0){
+                runner_data['CASE_IDS'] = config.caserun_ids.join(",");
+                runner_data['SUMMARY'] = $("#summary").val();
+            }
+            var runner_config = {
+                stable:"http://ciqe.englab.nay.redhat.com/job/CucuShift-Runner/buildWithParameters",
+                master:"http://ciqe.englab.nay.redhat.com/job/Runner-master/buildWithParameters",
+                local:"http://localhost:8008/cucushift/buildWithParameters"
+            };
+            $.ajax({
+                type: "POST",
+                url: runner_config[$("#runner_type").val()],
+                data: runner_data
             }).done(function(){
                 alert("Job Sent. Check the jenkins...");
             });

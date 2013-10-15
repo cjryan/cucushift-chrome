@@ -3,19 +3,20 @@ function plan_inject_into_menu(){
     var new_li = document.createElement('li');
     var new_a = $('<input type="button" value="Run@CucuShift">');
     $(new_a).click(function(){
-        show_dialog({});
+        var case_ids = get_checked_case_ids();
+        show_dialog({case_ids:case_ids});
     });
     $(new_li).append(new_a);
     $(ul).append(new_li);
 }
 
 function hack_plan(){
-    put_dialog();
+    put_dialog({summary:true});
 
     //1. Add new column to the table
     $("#id_buttons").append("<input id='id_button_cucushift_hack' type='button' value='CucuShift Hack'>").click(function(){
         if ($("#testcases > table > thead > tr").length == 0){
-            alert("Not ready...");
+            alert("Not ready...\n Try again in a while");
             return;
         }
         plan_inject_into_menu();
@@ -70,3 +71,19 @@ function hack_plan(){
     });
 }
 
+function get_checked_case_ids(){
+    var case_ids = [];
+    $("#id_table_cases > tbody > tr").each(function(){
+        var checkbox_td = $(this).children()[1];
+        var case_id_td = $(this).children()[2];
+        if (case_id_td == undefined)
+            return;
+        if (checkbox_td == undefined)
+            return;
+        var case_id = parseInt($(caserun_id_td).find('a')[0].text.replace('#',''));
+        if ($($(checkbox_td).children()[0]).is(':checked')){
+            case_ids.push(case_id);
+        }
+    });
+    return case_ids;
+}
