@@ -57,7 +57,7 @@ function hack_run(){
                 var github_url = 'https://github.com/openshift/cucushift/blob/master/features/'+feature_file;
                 var astatus = case_astatus_td.innerHTML;
                 case_astatus_td.innerHTML = "";
-                $(case_astatus_td).append('<a href="'+github_url+'">'+astatus+'</a>');
+                $(case_astatus_td).append('<a targe=_blank href="'+github_url+'">'+astatus+'</a>');
             }
         });
         $(this).append(dev_td);
