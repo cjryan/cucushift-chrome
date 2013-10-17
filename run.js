@@ -23,6 +23,7 @@ function hack_run(){
         var caserun_id_td = $(this).children()[2];
         var case_status_td = $(this).children()[11];
         var case_summary_td = $(this).children()[4];
+        var case_astatus_td = $(this).children()[7];
         if (case_id_td == undefined)
             return;
         var case_id = $(case_id_td).find('a')[0].text;
@@ -44,25 +45,19 @@ function hack_run(){
         $.ajax({
             url: 'https://tcms.engineering.redhat.com/case/'+case_id
         }).done(function(data){
-            var matches = data.match(/automated([^<\/"]+)/i);
-            if (matches.length>0){
-                //console.log("FOUND automated: "+matches[1]);
-                if (case_status == "error" || case_status == "failed"){
-                    var assignee = "mzimen";
-                    if (matches[1].match(/ofayans/))
-                        assignee = "ofayans";
-                    else if (matches[1].match(/cryan/))
-                        assignee = "cryan";
-                    else if (matches[1].match(/jizhao/))
-                        assignee = "jizhao";
-                    else if (matches[1].match(/pruan/))
-                        assignee = "pruan";
-                    dev_td.innerHTML = '<a title="File a new JIRA issue" target="_blank" href="https://projects.engineering.redhat.com/secure/CreateIssueDetails!init.jspa?description='+description+'&summary='+case_summary+'&pid=11302&issuetype=1&assignee='+assignee+'">'+matches[1]+'</a>';
-                }else{
-                    dev_td.innerHTML = matches[1];
-                }
-            }else{
-                dev_td.innerHTML = "Unknown";
+            var developer = get_developer(data);
+            if (case_status == "error" || case_status == "failed"){
+                dev_td.innerHTML = '<a title="File a new JIRA issue" target="_blank" href="https://projects.engineering.redhat.com/secure/CreateIssueDetails!init.jspa?description='+description+'&summary='+case_summary+'&pid=11302&issuetype=1&assignee='+developer+'">'+developer+'</a>';
+            }else{ //PASSED => we don't need JIRA link, only developer name
+                dev_td.innerHTML = developer;
+            }
+            //add github url
+            var feature_file = get_feature_file(data);
+            if (feature_file != null){
+                var github_url = 'https://github.com/openshift/cucushift/blob/master/features/'+feature_file;
+                var astatus = case_astatus_td.innerHTML;
+                case_astatus_td.innerHTML = "";
+                $(case_astatus_td).append('<a href="'+github_url+'">'+astatus+'</a>');
             }
         });
         $(this).append(dev_td);
@@ -185,4 +180,31 @@ function get_checked_caserun_ids(){
         }
     });
     return caserun_ids;
+}
+
+function get_feature_file(data){
+    var feature_file = null;
+    var matches = data.match(/<span id="display_script" >({[^<"]+)/i);
+    if (matches && matches.length>0){
+      feature_file = matches[1];
+      feature_file = feature_file.replace(/&quot;/g,'"');
+      feature_file = JSON.parse(feature_file)["ruby"].split(':')[0];
+    }
+    return feature_file;
+}
+
+function get_developer(data){
+    var matches = data.match(/automated([^<\/"]+)/i);
+    var developer = "Unknown";
+    if (matches && matches.length > 0){
+        if (matches[1].match(/ofayans/))
+            developer = "ofayans";
+        else if (matches[1].match(/cryan/))
+            developer = "cryan";
+        else if (matches[1].match(/jizhao/))
+            developer = "jizhao";
+        else if (matches[1].match(/pruan/))
+            developer = "pruan";
+    }
+    return developer;
 }
