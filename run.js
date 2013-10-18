@@ -205,6 +205,8 @@ function get_developer(data){
             developer = "jizhao";
         else if (matches[1].match(/pruan/))
             developer = "pruan";
+        else if (matches[1].match(/mzimen/))
+            developer = "mzimen";
     }
     return developer;
 }
