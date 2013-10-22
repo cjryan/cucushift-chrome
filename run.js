@@ -24,9 +24,12 @@ function hack_run(){
         var case_status_td = $(this).children()[11];
         var case_summary_td = $(this).children()[4];
         var case_astatus_td = $(this).children()[7];
+        var case_istatus_td = $(this).children()[11];
         if (case_id_td == undefined)
             return;
         var case_id = $(case_id_td).find('a')[0].text;
+        //var case_id_td_html = case_id_td.innerHTML;
+        $(case_id_td).append('<a class="editlink" target=_blank href="http://tcms.engineering.redhat.com/case/'+case_id+'/edit">&nbsp;</a>');
         var caserun_id = $(caserun_id_td).find('a')[0].text;
         var case_summary = encodeURIComponent(case_id+"|"+$(case_summary_td).find('a')[0].text);
         var description = encodeURIComponent("caserun_id=https://tcms.engineering.redhat.com/run/"+testrun_id+"/#caserun_"+caserun_id+"\ncase_id=https://tcms.engineering.redhat.com/case/"+case_id);
@@ -59,6 +62,11 @@ function hack_run(){
                 case_astatus_td.innerHTML = "";
                 $(case_astatus_td).append('<a targe=_blank href="'+github_url+'">'+astatus+'</a>');
             }
+            //set STATUS icon as link to REPORT
+            /*var istatus = case_istatus_td.innerHTML;
+            var report_url = "http://www.postoy.sk";
+            case_istatus_td.innerHTML = "";
+            $(case_istatus_td).append('<a targe=_blank href="'+report_url+'">'+istatus+'</a>');*/
         });
         $(this).append(dev_td);
     });
