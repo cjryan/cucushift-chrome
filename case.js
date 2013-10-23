@@ -13,8 +13,26 @@ function get_script_name(){
     }
 }
 
+function get_trello_board(summary){
+    if (summary.match(/runtime/))
+        return "origin_runtime";
+    if (summary.match(/ui/) || summary.match(/user_interface/))
+        return "origin_ui";
+    if (summary.match(/origin_broker/))
+        return "origin_broker";
+}
+
 
 function hack_case(){
+    var trello_board = get_trello_board($("#display_title").html());
+    var trello_config = {
+        origin_runtime: "https://trello.com/b/qjfQ62lZ/openshift-origin-runtime",
+        broker: "https://trello.com/b/QfI7clCY/broker",
+        origin_broker: "https://trello.com/b/nbkIrqKa/openshift-origin-broker",
+        origin_ui: "https://trello.com/b/M0rP0aLj/openshift-origin-user-interface"
+    };
+    var trello_url = trello_config[trello_board];
+    $(".rightlistinfo > div").children(':last').append('<a target=_blank href="'+trello_url+'">[Trello]</a>');
     //$("#display_script").css({background: "red"});
     var new_li = document.createElement('li');
     $(new_li).attr('id', 'tabGitHub');
