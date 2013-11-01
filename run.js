@@ -1,9 +1,9 @@
 function hack_run(){
     //New menu entry for launching jobs
     put_dialog({});
-    var ul = document.evaluate('//*[@id="id_form_case_runs"]/div/div[2]/div[1]/ul', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue; 
+    var ul = document.evaluate('//*[@id="id_form_case_runs"]/div/div[2]/div[1]/ul', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;
     var new_li = document.createElement('li');
-    var new_a = $("<a href='#'>Run@CucuShift</a>");
+    var new_a = $("<a href='#'><strong>CuCuShift</strong></a>");
     $(new_a).click(function(){
         var caserun_ids = get_checked_caserun_ids();
         if (caserun_ids.length == 0){
@@ -78,38 +78,59 @@ function put_dialog(config){
   if (config.summary){
       dialog += '<label for="summary">Summary</label><input type="text" name="summary" id="summary" value="Testrun ..." class="text ui-widget-content ui-corner-all" />';
   }
-  dialog += '<label for="broker">Broker</label>\
-    <input type="text" name="broker" id="broker" value="int.openshift.redhat.com" class="text ui-widget-content ui-corner-all" />\
-    <label for="runner_type">Runner Type</label>\
-    <select name="runner_type" id="runner_type" class="text ui-widget-content ui-corner-all">\
-        <option value="stable">stable</option>\
+  dialog += '<label style="display:inline;" for="broker">Broker</label>\
+    <input type="text" name="broker" id="broker" value="%QE_mzimen-dev" class="text ui-widget-content ui-corner-all" />\
+    <label style="display:inline;" for="launcher_type">Launcher Type</label>\
+    <select name="launcher_type" id="launcher_type" class="text ui-widget-content ui-corner-all">\
         <option value="master">master</option>\
-        <option value="local">local</option>\
+        <option value="stable">stable</option>\
     </select>\
-    <label for="broker_type">Broker Type</label>\
+    <label style="display:inline;" for="runner_job">Runner Type</label>\
+    <select name="runner_job" id="runner_job" class="text ui-widget-content ui-corner-all">\
+        <option value="CucuShift-Runner">stable</option>\
+        <option value="Runner-master">master</option>\
+        <option value="Runner-mzimen">local</option>\
+    </select>\
+    <label style="display:inline;" for="broker_type">Broker Type</label>\
     <select name="broker_type" id="broker_type" class="text ui-widget-content ui-corner-all">\
         <option value="devenv">devenv</option>\
         <option value="stage">stage</option>\
         <option value="int">int</option>\
         <option value="prod">prod</option>\
     </select>\
-    <label for="rhc_branch">RHC_BRANCH</label>\
+    <label style="display:inline;" for="rhc_branch">RHC_BRANCH</label>\
         <select name="rhc_branch" id="rhc_branch" class="ui-widget-content ui-corner-all">\
         <option value="candidate">candidate</option>\
         <option value="stable">stable</option>\
     </select>\
+    <label for="job_count">JOB_COUNT</label>\
+    <input type="text" name="job_count" id="job_count" value="5" class="text ui-widget-content ui-corner-all" />\
+    <label for="job_count">ACCOUNTS PER JOB</label>\
+    <input type="text" name="acc4job" id="acc4job" value="4" class="text ui-widget-content ui-corner-all" />\
     <label for="max_gears">MAX_GEARS</label>\
     <input type="text" name="max_gears" id="max_gears" value="30" class="text ui-widget-content ui-corner-all" />\
     <label for="debug">DEBUG mode</label>\
     <input type="checkbox" name="debug" id="debug" checked=true class="ui-widget-content ui-corner-all" />\
     <label for="accounts">Accounts</label>\
     <textarea rows="3" cols="50" name="accounts" id="accounts"  class="text ui-widget-content ui-corner-all">\
-login1:password1:small\
+login1:password1:small,login2:password1:small\
 </textarea>\
   </fieldset>\
   </form>\
 </div>';
-    $(document.body).append(dialog);
+  $(document.body).append(dialog);
+  $("#broker_type").change(function(){
+      var selected = $(this).find("option:selected").text();
+      if (selected == "devenv"){
+          $("#job_count").show();
+          $("#acc4job").show();
+          $("#accounts").hide();
+      }else{
+          $("#job_count").hide();
+          $("#acc4job").hide();
+          $("#accounts").show();
+      }
+  });
 }
 
 
@@ -138,7 +159,12 @@ function show_dialog(config){
                     "OPENSHIFT_ACCOUNTS": accounts.val(),
                     "DEBUG": debug.is(':checked'),
                     "token": "openshift",
-                    "TESTRUN_ID": testrun_id};
+                    "TESTRUN_ID": testrun_id,
+                    "JOB_NAME": $("#runner_job :selected").text(),
+                    "ACCOUNTS_PER_JOB": $("#acc4job").val(),
+                    "JOB_COUNT": $("#job_count").val()
+                    //TODO MONGO
+            };
             if (config.caserun_ids){
                 runner_data['CASERUN_IDS'] = config.caserun_ids.join(",");
             }
@@ -146,14 +172,20 @@ function show_dialog(config){
                 runner_data['CASE_IDS'] = config.case_ids.join(",");
                 runner_data['SUMMARY'] = $("#summary").val();
             }
+            var launcher_config = {
+                stable:"http://ciqe.englab.nay.redhat.com/job/CucuShift-Launcher/buildWithParameters",
+                //local:"http://localhost:8008/cucushift/buildWithParameters",
+                master:"http://ciqe.englab.nay.redhat.com/job/Launcher-master/buildWithParameters"
+            };
             var runner_config = {
                 stable:"http://ciqe.englab.nay.redhat.com/job/CucuShift-Runner/buildWithParameters",
                 master:"http://ciqe.englab.nay.redhat.com/job/Runner-master/buildWithParameters",
+                mzimen:"http://ciqe.englab.nay.redhat.com/job/Runner-mzimen/buildWithParameters",
                 local:"http://localhost:8008/cucushift/buildWithParameters"
             };
             $.ajax({
                 type: "POST",
-                url: runner_config[$("#runner_type").val()],
+                url: launcher_config[$("#launcher_type").val()],
                 data: runner_data
             }).done(function(){
                 alert("Job Sent. Check the jenkins/localhost...");
@@ -168,7 +200,7 @@ function show_dialog(config){
       }
     });
   });
-  $("#dialog-form").dialog( "open" );
+  $("#dialog-form").dialog("open");
 }
 
 
