@@ -87,9 +87,9 @@ function put_dialog(config){
     </select>\
     <label style="display:inline;" for="runner_job">Runner Type</label>\
     <select name="runner_job" id="runner_job" class="text ui-widget-content ui-corner-all">\
-        <option value="CucuShift-Runner">stable</option>\
-        <option value="Runner-master">master</option>\
-        <option value="Runner-mzimen">local</option>\
+        <option value="CucuShift-Runner">CucuShift-Runner</option>\
+        <option value="Runner-master">Runner-master</option>\
+        <option value="Runner-mzimen">Runner-mzimen</option>\
     </select>\
     <label style="display:inline;" for="broker_type">Broker Type</label>\
     <select name="broker_type" id="broker_type" class="text ui-widget-content ui-corner-all">\
