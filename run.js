@@ -82,8 +82,8 @@ function put_dialog(config){
     <input type="text" name="broker" id="broker" value="%QE_mzimen-dev" class="text ui-widget-content ui-corner-all" />\
     <label style="display:inline;" for="launcher_type">Launcher Type</label>\
     <select name="launcher_type" id="launcher_type" class="text ui-widget-content ui-corner-all">\
-        <option value="master">master</option>\
         <option value="stable">stable</option>\
+        <option value="master">master</option>\
     </select>\
     <label style="display:inline;" for="runner_job">Runner Type</label>\
     <select name="runner_job" id="runner_job" class="text ui-widget-content ui-corner-all">\
@@ -99,12 +99,12 @@ function put_dialog(config){
         <option value="prod">prod</option>\
     </select>\
     <label style="display:inline;" for="rhc_branch">RHC_BRANCH</label>\
-        <select name="rhc_branch" id="rhc_branch" class="ui-widget-content ui-corner-all">\
+    <select name="rhc_branch" id="rhc_branch" class="ui-widget-content ui-corner-all">\
         <option value="candidate">candidate</option>\
         <option value="stable">stable</option>\
     </select>\
     <label for="job_count">JOB_COUNT</label>\
-    <input type="text" name="job_count" id="job_count" value="5" class="text ui-widget-content ui-corner-all" />\
+    <input type="text" name="job_count" id="job_count" value="3" class="text ui-widget-content ui-corner-all" />\
     <label for="job_count">ACCOUNTS PER JOB</label>\
     <input type="text" name="acc4job" id="acc4job" value="4" class="text ui-widget-content ui-corner-all" />\
     <label for="max_gears">MAX_GEARS</label>\
@@ -122,12 +122,12 @@ login1:password1:small,login2:password1:small\
   $("#broker_type").change(function(){
       var selected = $(this).find("option:selected").text();
       if (selected == "devenv"){
-          $("#job_count").show();
-          $("#acc4job").show();
+          //$("#job_count").show();
+          //$("#acc4job").show();
           $("#accounts").hide();
       }else{
-          $("#job_count").hide();
-          $("#acc4job").hide();
+          //$("#job_count").hide();
+          //$("#acc4job").hide();
           $("#accounts").show();
       }
   });
@@ -159,7 +159,7 @@ function show_dialog(config){
                     "OPENSHIFT_ACCOUNTS": accounts.val(),
                     "DEBUG": debug.is(':checked'),
                     "token": "openshift",
-                    "TESTRUN_ID": testrun_id,
+                    //"TESTRUN_ID": testrun_id,
                     "JOB_NAME": $("#runner_job :selected").text(),
                     "ACCOUNTS_PER_JOB": $("#acc4job").val(),
                     "JOB_COUNT": $("#job_count").val()
