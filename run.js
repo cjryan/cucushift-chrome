@@ -97,6 +97,8 @@ function put_dialog(config){
         <option value="stage">stage</option>\
         <option value="int">int</option>\
         <option value="prod">prod</option>\
+        <option value="enterprise">enterprise</option>\
+        <option value="origin">origin</option>\
     </select>\
     <label style="display:inline;" for="rhc_branch">RHC_BRANCH</label>\
     <select name="rhc_branch" id="rhc_branch" class="ui-widget-content ui-corner-all">\
@@ -112,7 +114,7 @@ function put_dialog(config){
     <label for="debug">DEBUG mode</label>\
     <input type="checkbox" name="debug" id="debug" checked=true class="ui-widget-content ui-corner-all" />\
     <label for="accounts">Accounts</label>\
-    <textarea rows="3" cols="50" name="accounts" id="accounts"  class="text ui-widget-content ui-corner-all">\
+    <textarea style="display:none;" rows="3" cols="50" name="accounts" id="accounts"  class="text ui-widget-content ui-corner-all">\
 login1:password1:small,login2:password1:small\
 </textarea>\
   </fieldset>\

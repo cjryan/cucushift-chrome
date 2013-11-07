@@ -5,7 +5,7 @@ $( document ).ready(function() {
    hack_plan();
  }else if (document.location.href.match(/\/case\//)){
    hack_case();
- }else if (document.location.href.match(/ciqe\./)){
+ }else if (document.location.href.match(/ciqe\..*consoleFull/)){
    hack_jenkins();
  }
 });
