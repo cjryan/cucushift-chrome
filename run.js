@@ -2,8 +2,9 @@ function hack_run(){
     //New menu entry for launching jobs
     put_dialog({});
     var ul = document.evaluate('//*[@id="id_form_case_runs"]/div/div[2]/div[1]/ul', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue;
+    //---------CucuShift---
     var new_li = document.createElement('li');
-    var new_a = $("<a href='#'><strong>CuCuShift</strong></a>");
+    var new_a = $("<a href='#'><strong>CucuShift</strong></a>");
     $(new_a).click(function(){
         var caserun_ids = get_checked_caserun_ids();
         if (caserun_ids.length == 0){
@@ -11,6 +12,37 @@ function hack_run(){
             return;
         }
         show_dialog({caserun_ids:caserun_ids});
+    });
+    $(new_li).append(new_a);
+    $(ul).append(new_li);
+    //---------JIRA---------
+    new_li = document.createElement('li');
+    new_a = $("<a href='#'><strong>JIRA issue</strong></a>");
+    $(new_a).click(function(){
+        var caserun_ids = get_checked_caserun_ids();
+        if (caserun_ids.length == 0){
+            alert("No caseruns have been checked for testing...");
+            return;
+        }
+        var testrun_id = $("#value_run_id").val();
+        file_jira_issue({summary:"Fix cases from run%23"+testrun_id,
+                         description:caserun_ids.map(function (x){
+                             return "https://tcms.engineering.redhat.com/run/"+testrun_id+"/%23caserun_"+x;
+                         }).join("%0D%0A")});
+    });
+    $(new_li).append(new_a);
+    $(ul).append(new_li);
+    //---------SetDeveloper------
+    new_li = document.createElement('li');
+    new_a = $("<a href='#'><strong>SetDeveloper</strong></a>");
+    $(new_a).click(function(){
+        var developer = prompt("Who is the developer to assign?", "");
+        var case_ids = get_checked_case_ids_run();
+        if (case_ids.length == 0){
+            alert("No cases have been checked for assigning developer...");
+            return;
+        }
+        assign_developer({case_ids:case_ids, developer:developer});
     });
     $(new_li).append(new_a);
     $(ul).append(new_li);
@@ -84,6 +116,7 @@ function put_dialog(config){
     <select name="launcher_type" id="launcher_type" class="text ui-widget-content ui-corner-all">\
         <option value="stable">stable</option>\
         <option value="master">master</option>\
+        <option value="enterprise">enterprise</option>\
     </select>\
     <label style="display:inline;" for="runner_job">Runner Type</label>\
     <select name="runner_job" id="runner_job" class="text ui-widget-content ui-corner-all">\
@@ -119,6 +152,12 @@ function put_dialog(config){
     <textarea style="display:none;" rows="3" cols="50" name="accounts" id="accounts"  class="text ui-widget-content ui-corner-all">\
 login1:password1:small,login2:password1:small\
 </textarea>\
+    <label for="dns_ip">DNS_IP</label>\
+    <input type="text" name="dns_ip" id="dns_ip" value="" class="text ui-widget-content ui-corner-all" />\
+    <label for="domain_name">DOMAIN_NAME</label>\
+    <input type="text" name="domain_name" id="domain_name" value="" class="text ui-widget-content ui-corner-all" />\
+    <label for="client_build_tree">CLIENT_BUILD_TREE</label>\
+    <input type="text" name="client_build_tree" id="client_build_tree" value="" class="text ui-widget-content ui-corner-all" />\
   </fieldset>\
   </form>\
 </div>';
@@ -130,6 +169,11 @@ login1:password1:small,login2:password1:small\
           //$("#acc4job").show();
           $("#accounts").hide();
       }else{
+          if (selected == "enterprise"){
+            $("#client_build_tree").show();
+            $("#domain_name").show();
+            $("#dns_ip").show();
+          }
           //$("#job_count").hide();
           //$("#acc4job").hide();
           $("#accounts").show();
@@ -169,6 +213,11 @@ function show_dialog(config){
                     "JOB_COUNT": $("#job_count").val()
                     //TODO MONGO
             };
+            if (broker_type == "enterprise"){
+                runner_data['DNS_IP'] = $("#dns_ip :selected").text();
+                runner_data['DOMAIN_NAME'] = $("#domain_name :selected").text();
+                runner_data['CLIENT_BUILD_TREE'] = $("#client_build_tree :selected").text();
+            }
             if (config.caserun_ids){
                 runner_data['CASERUN_IDS'] = config.caserun_ids.join(",");
             }
@@ -178,6 +227,7 @@ function show_dialog(config){
             }
             var launcher_config = {
                 stable:"http://ciqe.englab.nay.redhat.com/job/CucuShift-Launcher/buildWithParameters",
+                enterprise:"http://ciqe.englab.nay.redhat.com/job/OSE_Cucushift_Launcher/buildWithParameters",
                 //local:"http://localhost:8008/cucushift/buildWithParameters",
                 master:"http://ciqe.englab.nay.redhat.com/job/Launcher-master/buildWithParameters"
             };
@@ -207,6 +257,23 @@ function show_dialog(config){
   $("#dialog-form").dialog("open");
 }
 
+
+function get_checked_case_ids_run(){
+    var case_ids = [];
+    $("#id_table_cases > tbody > tr").each(function(){
+        var checkbox_td = $(this).children()[0];
+        var case_id_td = $(this).children()[3];
+        if (case_id_td == undefined)
+            return;
+        if (checkbox_td == undefined)
+            return;
+        var case_id = parseInt($(case_id_td).find('a')[0].text.replace('#',''));
+        if ($($(checkbox_td).children()[0]).is(':checked')){
+            case_ids.push(case_id);
+        }
+    });
+    return case_ids;
+}
 
 function get_checked_caserun_ids(){
     var caserun_ids = [];
@@ -253,4 +320,30 @@ function get_developer(data){
             developer = "mzimen";
     }
     return developer;
+}
+
+function assign_developer(conf){
+    alert("Not yet implemented");
+    return;
+    for (var c in conf.case_ids){
+        var case_id = conf.case_ids[c];
+        console.log(case_id);
+        $.ajax({
+            type: 'POST',
+            url: 'https://tcms.engineering.redhat.com/ajax/update',
+            data: {content_type:'testcase',
+                   object_pk: case_id,
+                   field: 'notes',
+                   value_str: 'str',
+                   value: 'developed by '+conf.developer
+           }
+        }).done(function(data){
+            console.log("DONE");
+        });
+    }
+}
+
+function file_jira_issue(cfg){
+   var url = 'https://projects.engineering.redhat.com/secure/CreateIssueDetails!init.jspa?description='+cfg.description+'&summary='+cfg.summary+'&pid=11302&issuetype=1';
+   window.open(url, '_blank');
 }
