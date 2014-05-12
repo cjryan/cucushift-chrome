@@ -305,19 +305,15 @@ function get_feature_file(data){
 }
 
 function get_developer(data){
-    var matches = data.match(/automated([^<\/"]+)/i);
+    var matches = data.match(/automated by(:)?([^<\/"]+)/i);
     var developer = "Unknown";
     if (matches && matches.length > 0){
-        if (matches[1].match(/ofayans/))
-            developer = "ofayans";
-        else if (matches[1].match(/cryan/))
-            developer = "cryan";
-        else if (matches[1].match(/jizhao/))
-            developer = "jizhao";
-        else if (matches[1].match(/pruan/))
-            developer = "pruan";
-        else if (matches[1].match(/mzimen/))
-            developer = "mzimen";
+        if (matches[2].match(/@redhat.com/)){
+          email = matches[2].indexOf("@")
+          developer = matches[2].substring(0, email)
+        } else {
+          developer = matches[2]
+        }
     }
     return developer;
 }
